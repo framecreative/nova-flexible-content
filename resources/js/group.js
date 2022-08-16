@@ -65,10 +65,12 @@ export default class Group {
 
     randomString(len, charSet) {
         charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var safeCharSet = charSet.match("[a-zA-Z]+") ? charSet.replace(/[0-9]/g, '') : charSet;
         var randomString = '';
         for (var i = 0; i < len; i++) {
-            var randomPoz = Math.floor(Math.random() * charSet.length);
-            randomString += charSet.substring(randomPoz,randomPoz+1);
+        var currentCharSet = i == 0 ? safeCharSet : charSet;
+            var randomPoz = Math.floor(Math.random() * currentCharSet.length);
+            randomString += currentCharSet.substring(randomPoz,randomPoz+1);
         }
         return randomString;
     }
