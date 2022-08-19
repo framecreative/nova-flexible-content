@@ -150,7 +150,7 @@ export default {
          * Emit event to Nova
          */
         emitNovaEvent() {
-            Nova.$emit('nova-flexible-content-updated', { group: { ...this.group }, type: { ...this.field } } );
+            Nova.$emit('nova-flexible-content-updated', [ this.group, this.field ] );
         },
 
         /**
