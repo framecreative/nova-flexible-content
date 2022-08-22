@@ -127,7 +127,7 @@ export default {
          */
         moveUp() {
             this.$emit('move-up');
-            this.emitNovaEvent();
+            this.emitNovaEvent('move-up');
         },
 
         /**
@@ -135,7 +135,7 @@ export default {
          */
         moveDown() {
             this.$emit('move-down');
-            this.emitNovaEvent();
+            this.emitNovaEvent('move-down');
         },
 
         /**
@@ -143,14 +143,14 @@ export default {
          */
         remove() {
             this.$emit('remove');
-            this.emitNovaEvent();
+            this.emitNovaEvent('remove');
         },
 
         /**
          * Emit event to Nova
          */
-        emitNovaEvent() {
-            Nova.$emit('nova-flexible-content-updated', { group: this.group, type: this.field } );
+        emitNovaEvent(type) {
+            Nova.$emit('nova-flexible-content-updated', { group: this.group, type: type } );
         },
 
         /**
