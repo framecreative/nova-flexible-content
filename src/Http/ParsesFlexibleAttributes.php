@@ -31,18 +31,36 @@ trait ParsesFlexibleAttributes
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    protected function getParsedFlexibleInputs(Request $request)
+    /**
+     * Transform the request's flexible values
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function getParsedFlexibleInputs(Request $request, $values=null, $parent=null)
     {
-        $this->registerFlexibleFields($request->input(FlexibleAttribute::REGISTER));
+        $this->registerFlexibleFields($request->input( ( $parent ? $parent . '.' : '' ) . FlexibleAttribute::REGISTER));
+        
+        return array_reduce(array_keys($values ?? $request->all()), function($carry, $attribute) use ($request, $parent) {
+            $input_attribute = $attribute;
 
-        return array_reduce(array_keys($request->all()), function ($carry, $attribute) use ($request) {
-            $value = $request->input($attribute);
-
-            if (! $this->isFlexibleAttribute($attribute, $value)) {
-                return $carry;
+            if ($parent) {
+                $input_attribute = $parent . '.' . $input_attribute;
             }
 
-            $carry[$attribute] = $this->getParsedFlexibleValue($value);
+            $value = $request->input($input_attribute);
+
+            if (is_array($value)) {
+                $field_values = $this->getParsedFlexibleInputs($request, $value, $input_attribute);
+
+                if ($field_values) {
+                    $carry[$attribute] = $field_values;
+                }
+            }
+            
+            if ($this->isFlexibleAttribute($attribute, $value)) {
+                $carry[$attribute] = $this->getParsedFlexibleValue($value);
+            }
 
             return $carry;
         }, []);
